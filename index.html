@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación Baby Shower - Universo Animado</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Quicksand', sans-serif; background: radial-gradient(circle at top, #0b1d39, #000814); overflow-x: hidden; margin: 0; }
+    h1 { font-family: 'Sacramento', cursive; }
+
+    /* Estrellas */
+    .stars { position: absolute; inset:0; z-index:0; }
+    .star { position: absolute; background: white; border-radius: 50%; opacity: 0.3; animation: twinkle 3s infinite alternate; }
+    @keyframes twinkle { 0%{opacity:0.1;} 50%{opacity:0.6;} 100%{opacity:0.1;} }
+
+    /* Órbitas de planetas */
+    .orbit { position: absolute; top:50%; left:50%; transform-origin:center; --radius:20vw; }
+    @keyframes rotateClockwise { 0%{ transform: rotate(0deg) translateX(var(--radius)) rotate(0deg); } 100%{ transform: rotate(360deg) translateX(var(--radius)) rotate(-360deg); } }
+    @keyframes rotateCounter { 0%{ transform: rotate(0deg) translateX(var(--radius)) rotate(0deg); } 100%{ transform: rotate(-360deg) translateX(var(--radius)) rotate(360deg); } }
+    .orbit.clockwise { animation: rotateClockwise linear infinite; }
+    .orbit.counterclockwise { animation: rotateCounter linear infinite; }
+
+    /* Astronautas flotando */
+    .astronaut, .astronaut2 { position:absolute; width:15vw; max-width:120px; animation: float 6s ease-in-out infinite; }
+    .astronaut { bottom:20%; left:5%; }
+    .astronaut2 { top:15%; right:5%; animation-delay:2s; }
+    @keyframes float { 0%,100%{ transform:translateY(0px) rotate(-10deg);} 50%{ transform:translateY(-25px) rotate(10deg);} }
+
+    /* Meteoritos */
+    .meteor { position:absolute; width:2px; height:8px; background: linear-gradient(to bottom, white, rgba(255,255,255,0)); top:-10px; left:0; opacity:0.8; transform: rotate(45deg); animation: meteorFall linear infinite; }
+    @keyframes meteorFall { 0%{ transform:translate(0,0) rotate(45deg); opacity:1;} 100%{ transform:translate(100vw,100vh) rotate(45deg); opacity:0;} }
+
+    /* Animación de entrada del texto */
+    @keyframes fadeInFloat { 0%{opacity:0; transform:translateY(-60px) scale(0.8) rotate(-5deg);} 60%{opacity:1; transform:translateY(5px) scale(1.05) rotate(3deg);} 100%{opacity:1; transform:translateY(0) scale(1) rotate(0);} }
+    .animate-fade-in { animation: fadeInFloat 2s ease-out forwards; }
+
+    /* Brillo intermitente para Bastián */
+    @keyframes sparkle { 0%,100%{ text-shadow:0 0 10px #00ffff,0 0 20px #ff00ff,0 0 30px #ff69b4;} 50%{ text-shadow:0 0 20px #00ffff,0 0 30px #ff00ff,0 0 40px #ff69b4; } }
+    .sparkle { animation: sparkle 1.5s infinite alternate; }
+
+    /* Inputs futuristas */
+    #rsvpForm input, #rsvpForm select { color: white; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.4); padding: 0.5rem; border-radius: 0.5rem; width: 100%; margin-bottom: 0.75rem; font-weight: 500; backdrop-filter: blur(3px); transition: all 0.3s ease; }
+    #rsvpForm input::placeholder, #rsvpForm select option[value=""] { color: rgba(255,255,255,0.6); }
+    #rsvpForm input:focus, #rsvpForm select:focus { border-color: #ffd700; box-shadow: 0 0 8px #ffd700, 0 0 16px #ff69b4; outline: none; }
+    #rsvpForm select option { color: black; background-color: white; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; inset:0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 50; }
+    .modal.active { display: flex; }
+    .modal-content { background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); padding: 2rem; border-radius: 1rem; width: 90%; max-width: 400px; text-align: center; color: white; position: relative; }
+    .close-btn { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: white; }
+
+    /* Botón abrir modal */
+    .open-modal-btn { background: #ffd700; color: black; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.75rem; cursor: pointer; margin-top: 1.5rem; text-transform: uppercase; box-shadow: 0 0 8px #ffd700, 0 0 16px #ff69b4; transition: all 0.3s ease; }
+    .open-modal-btn:hover { box-shadow: 0 0 12px #ffd700, 0 0 24px #ff69b4; transform: scale(1.05); }
+
+    /* Contenido principal responsive */
+    .content { margin-top:-20px; padding: 0 1rem; }
+    .content p { font-size: 1rem; }
+    .content h1 { font-size: 2rem; }
+    .content h2 { font-size: 1.5rem; }
+
+    @media(min-width: 640px){
+      .content p { font-size: 1.2rem; }
+      .content h1 { font-size: 3rem; }
+      .content h2 { font-size: 2.5rem; }
+      .astronaut, .astronaut2 { width:100px; }
+    }
+
+    @media(min-width: 1024px){
+      .astronaut, .astronaut2 { width:120px; }
+      .orbit { --radius:150px; }
+    }
+  </style>
+</head>
+<body class="relative flex flex-col items-center justify-center min-h-screen text-white">
+
+  <!-- Estrellas -->
+  <div class="stars"></div>
+  <script>
+    for(let i=0;i<80;i++){
+      const star=document.createElement('div');
+      star.className='star';
+      const size=Math.random()*3+1;
+      star.style.width=size+'px';
+      star.style.height=size+'px';
+      star.style.top=Math.random()*100+'%';
+      star.style.left=Math.random()*100+'%';
+      star.style.animationDuration=(Math.random()*3+2)+'s';
+      document.querySelector('.stars').appendChild(star);
+    }
+  </script>
+
+  <!-- Planetas órbitas -->
+  <div class="orbit clockwise" style="--radius:18vw; animation-duration:20s;"><img src="https://img.icons8.com/color/96/planet.png" class="w-10 md:w-16"></div>
+  <div class="orbit clockwise" style="--radius:22vw; animation-duration:25s;"><img src="https://img.icons8.com/color/96/full-moon.png" class="w-10 md:w-14"></div>
+  <div class="orbit clockwise" style="--radius:26vw; animation-duration:22s;"><img src="https://img.icons8.com/color/96/rocket.png" class="w-12 md:w-16"></div>
+  <div class="orbit clockwise" style="--radius:30vw; animation-duration:28s;"><img src="https://img.icons8.com/color/96/venus-planet.png" class="w-10 md:w-12"></div>
+  <div class="orbit counterclockwise" style="--radius:20vw; animation-duration:24s;"><img src="https://img.icons8.com/color/96/full-moon.png" class="w-10 md:w-12"></div>
+  <div class="orbit counterclockwise" style="--radius:24vw; animation-duration:26s;"><img src="https://img.icons8.com/color/96/planet.png" class="w-12 md:w-18"></div>
+  <div class="orbit counterclockwise" style="--radius:28vw; animation-duration:30s;"><img src="https://img.icons8.com/color/96/rocket.png" class="w-14 md:w-20"></div>
+  <div class="orbit counterclockwise" style="--radius:32vw; animation-duration:32s;"><img src="https://img.icons8.com/color/96/venus-planet.png" class="w-10 md:w-14"></div>
+
+  <!-- Astronautas flotando -->
+  <img src="https://img.icons8.com/color/96/astronaut.png" class="astronaut">
+  <img src="https://img.icons8.com/color/96/astronaut.png" class="astronaut2">
+
+  <!-- Meteoritos -->
+  <script>
+    for(let i=0;i<5;i++){
+      const meteor=document.createElement('div');
+      meteor.className='meteor';
+      meteor.style.left=Math.random()*100+'vw';
+      meteor.style.animationDuration=(Math.random()*3+2)+'s';
+      meteor.style.animationDelay=(Math.random()*5)+'s';
+      document.body.appendChild(meteor);
+    }
+  </script>
+
+  <!-- Contenido principal -->
+  <div class="content relative z-10 text-center space-y-2 sm:space-y-4 animate-fade-in">
+    <p class="tracking-wider">Te invito a mi</p>
+    <h1 class="text-yellow-400 font-bold" style="text-shadow:0 0 10px #fff,0 0 20px #ff69b4;">Baby Shower</h1>
+    <h2 class="sparkle font-bold text-yellow-300">Bastián</h2>
+    <p>Sábado, 25 de Octubre 2025</p>
+    <p>5:00 PM</p>
+    <p>Casa de mis tatas</p>
+
+    <!-- Botón -->
+    <button class="open-modal-btn" id="openModal">Registrar asistencia</button>
+  </div>
+
+  <!-- Modal con formulario -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <h3 class="text-2xl mb-4 font-bold text-yellow-300">Confirma tu asistencia</h3>
+      <form id="rsvpForm">
+        <input type="text" name="name" placeholder="Tu nombre" required>
+        <select name="attendance" required>
+          <option value="">¿Asistirás?</option>
+          <option value="yes">Sí</option>
+          <option value="no">No</option>
+        </select>
+        <button type="submit" class="w-full bg-yellow-300 text-black font-bold py-2 rounded hover:bg-yellow-400">Enviar</button>
+      </form>
+      <p id="responseMessage" class="mt-3 text-white font-semibold"></p>
+    </div>
+  </div>
+
+  <script>
+    // Modal
+    const modal=document.getElementById('modal');
+    const openBtn=document.getElementById('openModal');
+    const closeBtn=document.getElementById('closeModal');
+    openBtn.addEventListener('click',()=>modal.classList.add('active'));
+    closeBtn.addEventListener('click',()=>modal.classList.remove('active'));
+    window.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('active'); });
+
+    // Envío a Formspree
+    const rsvpForm=document.getElementById('rsvpForm');
+    rsvpForm.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const formData=new FormData(rsvpForm);
+      try{
+        const res=await fetch('https://formspree.io/f/xeolbrzb',{ method:'POST', body:formData, headers:{'Accept':'application/json'} });
+        if(res.ok){
+          const name=formData.get('name');
+          const attendance=formData.get('attendance');
+          document.getElementById('responseMessage').textContent=`¡Gracias ${name}! Hemos registrado tu respuesta: ${attendance==='yes'?'Asistirás 🎉':'No podrás asistir 😢'}`;
+          rsvpForm.reset();
+          setTimeout(()=>modal.classList.remove('active'),5000);
+        } else { document.getElementById('responseMessage').textContent='Hubo un error al enviar, intenta de nuevo.'; }
+      } catch(err){ document.getElementById('responseMessage').textContent='Error de conexión, intenta de nuevo.'; }
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+
